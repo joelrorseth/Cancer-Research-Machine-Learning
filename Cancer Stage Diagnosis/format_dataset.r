@@ -9,7 +9,7 @@
 
 
 # Change working directory to current dataset location
-setwd("/Users/Joel/Documents/Research/Cancer Stage Diagnosis/brca_metabric")
+setwd("/Users/Joel/Documents/Research/Cancer Stage Diagnosis/Datasets/brca_metabric")
 
 
 ###########################################
@@ -88,6 +88,7 @@ write_matrix_to_file <- function(stage, summary) {
 # SECTION 1: Reading in gene expression data
 # Read in expression data
 expressions <- read.table("data_expression.txt", header=TRUE, fill=TRUE)
+expressions <- expressions[!duplicated(expressions$Hugo_Symbol),]
 
 
 # SECTION 2: Reading in patient cancer stage data
@@ -126,6 +127,9 @@ for (stage in c(0:4)) {
   # Obtain matrix for this stage
   summary <- construct_summary_matrix(stage, patients_3)
   
+  # Omit any potential error rows where NA was written
+  summary <- summary[!is.na(summary[,ncol(summary)]), ]
+  
   # Write it to file
   write_matrix_to_file(stage, summary)
   
@@ -141,6 +145,8 @@ summary_all <- summary_all[-1,]
 summary_all <- summary_all[sample(nrow(summary_all)),]
 summary_all <- rbind.data.frame(header_row, summary_all, stringsAsFactors=F)
 
+# Omit any potential error rows where NA was written
+summary_all <- summary_all[!is.na(summary_all[,ncol(summary_all)]), ]
 print(dim(summary_all))
 
 # Write it to file

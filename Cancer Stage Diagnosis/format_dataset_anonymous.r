@@ -9,7 +9,7 @@
 
 
 # Change working directory to current dataset location
-setwd("/Users/Joel/Documents/Research/Cancer Stage Diagnosis/brca_metabric")
+setwd("/Users/Joel/Documents/Research/Cancer Stage Diagnosis/Datasets/brca_metabric")
 
 
 ###########################################
@@ -81,8 +81,8 @@ construct_summary_matrix <- function(stage, patients) {
 write_matrix_to_file <- function(stage, summary) {
   
   # Write to file
-  filename <- paste0("anon_patient_expressions_stage_", as.character(stage), ".txt")
-  write.table(summary, file=filename, row.names=F, na="NA", col.names=F, sep=" ", quote=F)
+  filename <- paste0("anon_patient_expressions_stage_", as.character(stage), ".csv")
+  write.table(summary, file=filename, row.names=F, na="NA", col.names=F, sep=",", quote=F)
 }
 
 
@@ -90,9 +90,9 @@ write_matrix_to_file <- function(stage, summary) {
 
 
 # SECTION 1: Reading in gene expression data
-# Read in expression data
+# Read in expression data, remove duplicate gene measurements
 expressions <- read.table("data_expression.txt", header=TRUE, fill=TRUE)
-
+expressions <- expressions[!duplicated(expressions$Hugo_Symbol),]
 
 # SECTION 2: Reading in patient cancer stage data
 # Read patient dataset, maps patients to breast cancer stage
@@ -130,6 +130,13 @@ for (stage in c(0:4)) {
   # Obtain matrix for this stage
   summary <- construct_summary_matrix(stage, patients_3)
   
+  print(dim(summary))
+  
+  # Omit any potential error rows where NA was written
+  summary <- summary[!is.na(summary[,ncol(summary)]), ]
+  
+  print(dim(summary))
+  
   # Write it to file
   write_matrix_to_file(stage, summary)
   
@@ -145,6 +152,9 @@ summary_all <- summary_all[-1,]
 summary_all <- summary_all[sample(nrow(summary_all)),]
 summary_all <- rbind.data.frame(header_row, summary_all, stringsAsFactors=F)
 
+print(dim(summary_all))
+# Omit any potential error rows where NA was written
+summary_all <- summary_all[!is.na(summary_all[,ncol(summary_all)]), ]
 print(dim(summary_all))
 
 # Write it to file

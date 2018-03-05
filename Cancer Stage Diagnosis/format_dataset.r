@@ -145,11 +145,28 @@ summary_all <- summary_all[-1,]
 summary_all <- summary_all[sample(nrow(summary_all)),]
 summary_all <- rbind.data.frame(header_row, summary_all, stringsAsFactors=F)
 
-# Omit any potential error rows where NA was written
-summary_all <- summary_all[!is.na(summary_all[,ncol(summary_all)]), ]
+
+print("After forming complete matrix:")
 print(dim(summary_all))
+
+
+# Omit any potential error rows where NA was written to TUMOR_STAGE
+summary_all <- summary_all[!is.na(summary_all[,ncol(summary_all)]), ]
+print("After pruning NA rows:")
+print(dim(summary_all))
+
+
+# Omit columns (genes) that contain NA -- there should be 14 such columns
+column_idx_without_na <- apply(summary_all, 2, function(col){ !any(is.na(col)) } )
+genes_to_discard <- names(summary_all[,!column_idx_without_na])
+
+print("The following genes are being discarded due to 1 or more missing values:")
+print(genes_to_discard)
+
+summary_all <- summary_all[, column_idx_without_na]
+print("After pruning NA columns:")
+print(dim(summary_all))
+
 
 # Write it to file
 write_matrix_to_file("all", summary_all)
-
-

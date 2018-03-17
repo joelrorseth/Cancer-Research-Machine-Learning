@@ -7,6 +7,8 @@
 #import pymrmr
 from pandas import read_csv
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import RFE
 
 
 # Read the patient genetic dataset
@@ -28,9 +30,9 @@ def separate_dataset(df):
 
 
 # Write list of (feature selected) genes to txt file
-def write_genes(genes):
+def write_genes(genes, algo):
 
-    genes_file = open('genes_top_' + str(len(genes)) + '.txt', 'w')
+    genes_file = open('genes_' + algo + '_top_' + str(len(genes)) + '.txt', 'w')
 
     for gene in genes:
         genes_file.write("%s\n" % gene)
@@ -42,17 +44,31 @@ def select_genes_mRMR(df, num_genes):
     return pymrmr.mRMR(df, 'MIQ', num_genes)
 
 
-# Find top 'n' genes using same result set
-def find_top_n_genes_tree(X, y, gene_names):
+# Find top n genes, produce files using all selection algorithms for several n
+def find_top_n_genes(X, y, gene_names):
 
-    ranked = select_genes_tree(X, y, gene_names)
+    ranked_tree = select_genes_tree(X, y, gene_names)
 
     # Write each result to file
     for n in [10, 20, 50, 100, 200, 500, 1000]:
-        write_genes(ranked[0:n])
+        write_genes(ranked_tree[0:n], "tree")
+
+        # NOTE: Taking too long to run
+        #ranked_rfe = select_n_genes_rfe(X, y, gene_names, n)
+        #write(ranked_rfe, "rfe")
 
 
-# Run ExtraTreesClassifier bagged decision tree selection algorithm
+# Run RFE selection using logistic regression, determine list ranking genes
+def select_n_genes_rfe(X, y, gene_names, n):
+
+    # Run RFE to f
+    rfe = RFE( LogisticRegression(), n )
+    fit = rfe.fit(X, y)
+
+    return [name for i, name in enumerate(gene_names) if (fit.support_)[i]==True]
+
+
+# Run decision tree selection algorithm, determine list ranking genes
 def select_genes_tree(X, y, gene_names):
 
     # Use bagged decision tree to decide importance
@@ -75,6 +91,6 @@ def main():
     X, y, gene_names = separate_dataset(dataset)
 
     # Try selecting the top n genes, write to separate files
-    find_top_n_genes_tree(X, y, gene_names)
+    find_top_n_genes(X, y, gene_names)
 
 main()

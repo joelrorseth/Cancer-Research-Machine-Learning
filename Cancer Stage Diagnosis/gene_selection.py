@@ -4,7 +4,7 @@
 # genes, and remove unimportant.
 #
 
-#import pymrmr
+import pymrmr
 from pandas import read_csv
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
@@ -40,18 +40,21 @@ def write_genes(genes, algo):
 
 # Run the mRMR algorithm using a DataFrame
 # TODO: In progress, waiting on installation bug
-def select_genes_mRMR(df, num_genes):
+def select_n_genes_mRMR(df, num_genes):
     return pymrmr.mRMR(df, 'MIQ', num_genes)
 
 
 # Find top n genes, produce files using all selection algorithms for several n
-def find_top_n_genes(X, y, gene_names):
+def find_top_n_genes(df, X, y, gene_names):
 
     ranked_tree = select_genes_tree(X, y, gene_names)
 
     # Write each result to file
     for n in [10, 20, 50, 100, 200, 500, 1000]:
         write_genes(ranked_tree[0:n], "tree")
+
+        ranked_mRMR = select_n_genes_mRMR(df, n)
+        write(ranked_mRMR, "mRMR")
 
         # NOTE: Taking too long to run
         #ranked_rfe = select_n_genes_rfe(X, y, gene_names, n)
@@ -91,6 +94,6 @@ def main():
     X, y, gene_names = separate_dataset(dataset)
 
     # Try selecting the top n genes, write to separate files
-    find_top_n_genes(X, y, gene_names)
+    find_top_n_genes(dataset, X, y, gene_names)
 
 main()

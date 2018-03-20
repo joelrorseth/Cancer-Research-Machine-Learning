@@ -29,8 +29,9 @@ results <- rfe(patient_data[,-ncol(patient_data)],  # X
 # Summary
 print(results)
 
-# List selected features
+# List selected features, write them to file
 predictors(results)
+write(predictors(results), "genes_rfe_top_all.txt", sep="\n")
 
 # plot the results
 # plot(results, type=c("g", "o"))

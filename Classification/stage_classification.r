@@ -167,7 +167,7 @@ one_vs_one_classify <- function(X, y) {
 
 
 # Read preprocessed patient data
-setwd("/Users/Joel/Documents/Research/Breast Cancer Stage Diagnosis Ngom/Cancer Stage Diagnosis/Datasets")
+setwd("/Users/Joel/Documents/Research/Breast Cancer Stage Diagnosis/Datasets")
 patient_data <- read.csv("anon_patient_expressions_stage_all.csv", header=T, fill=T)
 
 # Separate predictors and response, X and y

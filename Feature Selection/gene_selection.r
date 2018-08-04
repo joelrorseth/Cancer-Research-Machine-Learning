@@ -8,7 +8,7 @@
 #
 
 # Read preprocessed patient data
-setwd("/Users/Joel/Documents/Research/Breast Cancer Stage Diagnosis Ngom/Cancer Stage Diagnosis/Datasets")
+setwd("/Users/Joel/Documents/Research/Breast Cancer Stage Diagnosis/Datasets")
 patient_data <- read.csv("anon_patient_expressions_stage_all.csv", header=T, fill=T)
 
 # Using the caret library for feature selection

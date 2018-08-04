@@ -9,7 +9,8 @@
 
 
 # Change working directory to current dataset location
-setwd("/Users/Joel/Documents/Research/Cancer Stage Diagnosis/Datasets/brca_metabric")
+setwd("/Users/Joel/Documents/Research/Breast Cancer Stage Diagnosis/Datasets/brca_metabric")
+
 
 
 ###########################################

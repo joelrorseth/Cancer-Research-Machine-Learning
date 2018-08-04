@@ -90,7 +90,7 @@ def select_genes_tree(X, y, gene_names):
 
 def main():
 
-    dataset = read_dataset("./Datasets/anon_patient_expressions_stage_all.csv")
+    dataset = read_dataset("../Datasets/anon_patient_expressions_stage_all.csv")
     X, y, gene_names = separate_dataset(dataset)
 
     # Try selecting the top n genes, write to separate files
